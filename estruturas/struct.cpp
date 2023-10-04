@@ -51,7 +51,8 @@ int main()
     car2.insere("Monza", "Cinza", 250, 260);
 
     car1.mostra();
-    car2.mostra();
+    car1.mudaVel(150);
+    car1.mostra();
 
     return 0;
 }
