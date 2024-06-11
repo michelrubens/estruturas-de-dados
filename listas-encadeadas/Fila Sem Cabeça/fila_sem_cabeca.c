@@ -9,56 +9,65 @@ typedef struct Celula {
     struct Celula *seg;
 } Celula;
 
-void insere(Celula **lst, int valor) {
+void insere(Celula **inicio, Celula **fim, int valor) {
     Celula *nova = (Celula *)malloc(sizeof(Celula));
     nova->conteudo = valor;
     nova->seg = NULL;
-    if (*lst == NULL) {
-        *lst = nova;
+    if (*fim == NULL) {
+        *inicio = nova;
+        *fim = nova;
     } else {
-        Celula *p = *lst;
-        while (p->seg != NULL) {
-            p = p->seg;
-        }
-        p->seg = nova;
+        (*fim)->seg = nova;
+        *fim = nova;
     }
 }
 
-void removeFila(Celula **lst) {
-    if (*lst != NULL) {
-        Celula *temp = *lst;
-        *lst = (*lst)->seg;
-        free(temp);
+int removeFila(Celula **inicio, Celula **fim) {
+    if (*inicio == NULL) {
+        return -1; // Fila vazia
     }
+    int valorRemovido = (*inicio)->conteudo;
+    Celula *temp = *inicio;
+    *inicio = (*inicio)->seg;
+    if (*inicio == NULL) {
+        *fim = NULL;
+    }
+    free(temp);
+    return valorRemovido;
 }
 
-void imprime(Celula *lst) {
+void imprime(Celula *inicio) {
     Celula *p;
-    for (p = lst; p != NULL; p = p->seg) {
+    for (p = inicio; p != NULL; p = p->seg) {
         printf("%d ", p->conteudo);
     }
     printf("\n");
 }
 
 int main() {
-  Celula *listaSemCabeca = NULL;
+    Celula *inicio = NULL;
+    Celula *fim = NULL;
 
-  // Inserção
-  insere(&listaSemCabeca, 1);
-  insere(&listaSemCabeca, 2);
-  insere(&listaSemCabeca, 3);
-  insere(&listaSemCabeca, 4);
-  insere(&listaSemCabeca, 5);
+    // Inserção
+    insere(&inicio, &fim, 1);
+    insere(&inicio, &fim, 2);
+    insere(&inicio, &fim, 3);
+    insere(&inicio, &fim, 4);
+    insere(&inicio, &fim, 5);
 
-  // Impressão
-  imprime(listaSemCabeca);
+    // Impressão
+    imprime(inicio);
 
-  // Remoção
-  removeFila(&listaSemCabeca);
-  removeFila(&listaSemCabeca);
+    // Remoção
+    int removido1 = removeFila(&inicio, &fim);
+    int removido2 = removeFila(&inicio, &fim);
 
-  // Impressão
-  imprime(listaSemCabeca);
+    // Impressão
+    imprime(inicio);
 
-  return 0;
+    // Exibe os valores removidos
+    printf("Removido: %d\n", removido1);
+    printf("Removido: %d\n", removido2);
+
+    return 0;
 }

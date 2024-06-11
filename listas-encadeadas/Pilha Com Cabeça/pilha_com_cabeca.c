@@ -1,7 +1,5 @@
-// - A lista começa com uma célula cabeça que não contém dados úteis 
-//  (inicializada no main).
-// - O ponteiro da lista (`lst`) sempre aponta para essa célula cabeça, 
-//  que por sua vez aponta para a primeira célula com dados.
+// - A lista começa com uma célula cabeça que não contém dados úteis (inicializada no main).
+// - O ponteiro da lista (`lst`) sempre aponta para a célula cabeça, que aponta para a 1ª célula com dados.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,32 +11,23 @@ typedef struct Celula {
 
 void insere(Celula *lst, int valor) {
     Celula *nova = (Celula *)malloc(sizeof(Celula));
-    nova->conteudo = valor;
-    nova->seg = NULL;
-    Celula *p = lst;
-    while (p->seg != NULL) {
-        p = p->seg;
+    if (nova == NULL) {
+        printf("Erro ao alocar memória\n");
     }
-    p->seg = nova;
+    nova->conteudo = valor;
+    nova->seg = lst->seg;
+    lst->seg = nova;
 }
 
-void removePilha(Celula *lst) {
-    if (lst->seg == NULL) return;
+int removePilha(Celula *lst) {
+    if (lst->seg == NULL) return -1; // retorna -1 como sinal de erro
 
-    Celula *p = lst;
-
-    if (p->seg->seg == NULL) {
-        free(p->seg);
-        p->seg = NULL;
-        return;
-    }
-
-    while (p->seg->seg != NULL) {
-        p = p->seg;
-    }
-
+    Celula *p = lst->seg;
+    int valorRemovido = p->conteudo;
+    lst->seg = p->seg; // Cabeça aponta para a próxima célukla
     free(p->seg);
-    p->seg = NULL;
+
+    return valorRemovido;
 }
 
 void imprime(Celula *lst) {
@@ -50,25 +39,29 @@ void imprime(Celula *lst) {
 }
 
 int main() {
-  Celula cabeca;
-  cabeca.seg = NULL;
+    Celula cabeca;
+    cabeca.seg = NULL;
 
-  // Inserção
-  insere(&cabeca, 1);
-  insere(&cabeca, 2);
-  insere(&cabeca, 3);
-  insere(&cabeca, 4);
-  insere(&cabeca, 5);
+    // Inserção
+    insere(&cabeca, 1);
+    insere(&cabeca, 2);
+    insere(&cabeca, 3);
+    insere(&cabeca, 4);
+    insere(&cabeca, 5);
 
-  // Impressão
-  imprime(&cabeca);
+    // Impressão
+    imprime(&cabeca);
 
-  // Remoção
-  removePilha(&cabeca);
-  removePilha(&cabeca);
+    // Remoção
+    int removido1 = removePilha(&cabeca);
+    int removido2 = removePilha(&cabeca);
 
-  // Impressão
-  imprime(&cabeca);
-  
-  return 0;
+    // Impressão
+    imprime(&cabeca);
+
+    // Exibe os valores removidos
+    printf("Removido: %d\n", removido1);
+    printf("Removido: %d\n", removido2);
+    
+    return 0;
 }
